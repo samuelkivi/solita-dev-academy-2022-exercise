@@ -7,7 +7,7 @@ const app = express();
 dotenv.config();
 
 app.use(bodyParser.json());
-app.use("/", router);
+app.use("/farm", router);
 
 app.listen(process.env.PORT, () => {
     console.log("Node server started running");

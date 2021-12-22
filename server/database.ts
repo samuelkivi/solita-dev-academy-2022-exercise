@@ -12,13 +12,8 @@ export const db = mysql.createConnection({
     database: process.env.DB_NAME
 });
 
-//var location = "testi"
-//var date = "testi"
-//var sensorType = "testi"
-//var value = 1234
 
 export const insertIntoFarms = (datapoint: DataPoint, callback: Function) => {
-    //"INSERT INTO farms VALUES (%s, %s, %s, %s)"
     const queryString = "INSERT INTO farms VALUES (?, ?, ?,?)"
     
     db.query(
@@ -29,6 +24,30 @@ export const insertIntoFarms = (datapoint: DataPoint, callback: Function) => {
   
         const insertId = (<OkPacket> result).insertId;
         callback(null, insertId);
+      }
+    );
+  };
+
+  export const findAll = (callback: Function) => {
+    const queryString = "SELECT * FROM farms"
+    
+    db.query(
+      queryString,
+      (err, result) => {
+        if (err) {callback(err)}
+        const rows = <RowDataPacket[]> result;
+        const datapoints: DataPoint[] = [];
+        rows.forEach(row => {
+          const datapoint: DataPoint =  {
+            location: row.location,
+            date: row.date,
+            sensorType: row.sensorType,
+            value: row.value
+          }
+          datapoints.push(datapoint);
+        });
+        
+        callback(null, datapoints);
       }
     );
   };
