@@ -6,7 +6,8 @@ const router = express.Router();
 
 
 router.post("/", async (req: Request, res: Response) => {
-  console.log("Add datapoint")
+  console.log("POST")
+  console.log(typeof req.body.location)
   console.log(req.body)
   const newDataPoint: DataPoint = req.body;
   dbConnection.insertIntoFarms(newDataPoint, (err: Error, orderId: number) => {
@@ -19,7 +20,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.get("/", async (req: Request, res: Response) => {
-  console.log("Datapoints request")
+  console.log("GET")
   dbConnection.findAll((err: Error, datapoints: DataPoint[]) => {
     if (err) {
       return res.status(500).json({"errorMessage": err.message});
