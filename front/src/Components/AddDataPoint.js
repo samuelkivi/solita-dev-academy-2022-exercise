@@ -11,6 +11,10 @@ export default class AddDataPoint extends React.Component {
     value: null
   }
 
+  refreshPage() {
+    window.location.reload(false);
+  }
+
   locationChange = event => {
     this.setState({ location: event.target.value });
   }
@@ -63,7 +67,7 @@ export default class AddDataPoint extends React.Component {
             Value:
             <input type="text" name="name" onChange={this.valueChange} />
           </label>
-          <button type="submit">Add</button>
+          <button onClick={this.refreshPage} type="submit">Add</button>
         </form>
       </div>
     )
