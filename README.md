@@ -7,12 +7,12 @@ https://github.com/solita/dev-academy-2022-exercise
 
 Tech stack includes:
 
-ReactJS,
+ReactJS
 
-TypeScript,
+TypeScript
 
-Express,
+Express
 
-MySQL,
+MySQL
 
 Python for inserting the given data database
