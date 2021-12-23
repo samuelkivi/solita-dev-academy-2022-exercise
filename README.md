@@ -15,4 +15,4 @@ Express
 
 MySQL
 
-Python for inserting the given data database
+Python for inserting the given data to the database
