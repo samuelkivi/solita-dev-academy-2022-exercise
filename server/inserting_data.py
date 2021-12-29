@@ -12,24 +12,11 @@ solitadb = mysql.connector.connect(
 
 mycursor = solitadb.cursor()
 
-#mycursor.execute("SELECT * FROM farms WHERE location ='PartialTech Research Farm'")
-#myresult = mycursor.fetchall()
-#print(myresult)
 
-#sql = "INSERT INTO farms VALUES (%s, %s,%s,%s)"
-#val = ("test_location2", "test_time2","test_sensor2","4321")
-#mycursor.execute(sql, val)
-#solitadb.commit()
-#print(mycursor.rowcount, "record inserted.")
-
-#df_partialtech = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/PartialTech.csv')
-#df_metsola = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/friman_metsola.csv')
-#df_noora = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/Nooras_farm.csv')
-#df_ossi = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/ossi_farm.csv')
-
-#frames = [df_metsola, df_noora, df_partialtech,df_ossi]
-#df = pd.concat(frames)
-#df.shape
+df_partialtech = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/PartialTech.csv')
+df_metsola = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/friman_metsola.csv')
+df_noora = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/Nooras_farm.csv')
+df_ossi = pd.read_csv('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/ossi_farm.csv')
 
 
 def drop_nulls(dataframe):
@@ -38,15 +25,37 @@ def drop_nulls(dataframe):
     #print(dataframe.isnull().any())
     return dataframe
 
-def insert(url):
-    df = pd.read_csv(url)
+    
+def validate_values(df, sensor, lower_limit, upper_limit):
+    df = df.loc[df['sensorType'] == sensor]
+    df = df[(df['value'] >= lower_limit) & (df['value'] <= upper_limit)]
+    return df
+    
+
+#Drops nulls and checks the validation rules
+#Inserts dataframe into database
+def validate_and_insert(df):
+    #print(df.isnull().any())
     df = drop_nulls(df)
+    #print(df.isnull().any())
+    df_pH = validate_values(df, "pH", 0 ,14)
+    insert_df(df_pH)
+    df_temperature = validate_values(df, "temperature", -50 ,100)
+    insert_df(df_temperature)
+    df_rainFall = validate_values(df, "rainFall", 0 ,500)
+    insert_df(df_rainFall)
+    
+    
+#Inserts dataframe into database
+def insert_df(df):
     df_list = df.values.tolist()
     sql = "INSERT INTO farms VALUES (%s, %s, %s, %s)"
     mycursor.executemany(sql, df_list)
     solitadb.commit()
     print(mycursor.rowcount, "was inserted.")
     
-#insert('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/friman_metsola.csv')
-#insert('https://raw.githubusercontent.com/solita/dev-academy-2022-exercise/main/PartialTech.csv')
-#drop_nulls(df_metsola)
+    
+validate_and_insert(df_partialtech)
+validate_and_insert(df_metsola)
+validate_and_insert(df_noora)
+validate_and_insert(df_ossi)
