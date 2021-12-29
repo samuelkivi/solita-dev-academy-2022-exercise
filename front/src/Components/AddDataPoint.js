@@ -31,10 +31,8 @@ export default class AddDataPoint extends React.Component {
     this.setState({ value: event.target.value });
   }
 
-  handleSubmit = event => {
-    console.log("handleSubmit")
-    event.preventDefault();
-
+  sendData = () => {
+    console.log("sendData")
     axios.post(baseURL, { 
       location: this.state.location,
       date: this.state.date,
@@ -45,6 +43,35 @@ export default class AddDataPoint extends React.Component {
         console.log(res);
         console.log(res.data);
       })
+  }
+
+  handleSubmit = event => {
+    event.preventDefault();
+    console.log("handleSubmit")
+    if(this.state.sensorType === "pH"){
+      if(this.state.value <= 14 && this.state.value >= 0){
+        this.sendData()
+      }
+      else{
+        alert("pH must be between 0 and 14");
+      }
+    }
+    else if(this.state.sensorType === "temperature"){
+      if(this.state.value <= 100 && this.state.value >= -50){
+        this.sendData()
+      }
+      else{
+        alert("temperature must be between -50 and 100");
+      }
+    }
+    else if(this.state.sensorType === "rainFall"){
+      if(this.state.value <= 500 && this.state.value >= 0){
+        this.sendData()
+      }
+      else{
+        alert("temperature must be between 0 and 500");
+      }
+    }
   }
 
   render() {
